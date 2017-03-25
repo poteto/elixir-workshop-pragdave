@@ -1,5 +1,8 @@
 defmodule Hangman.Game do
+  alias Hangman.Status
+  defstruct external_state: %Status{}, word: nil
 
+  @difficulty 10
   @moduledoc """
 
   This is the backend for a Hangman game. It manages the game state.
@@ -93,9 +96,9 @@ the first line we only show the resulting status (not the value of the
   """
 
   @spec new_game(String.t) :: game
-  
+
   def new_game(word \\ Hangman.Dictionary.random_word) do
-    # create the state here
+    %Hangman.Game{external_state: Status.new(@difficulty, word), word: word}
   end
 
   @doc """
@@ -119,7 +122,7 @@ the first line we only show the resulting status (not the value of the
   """
 
   @spec make_move(game, ch) :: { game, status }
-  
+
   def make_move(game, guess) do
     # check to see if the letter has already been used, returning
     # the :already_guessed status in guess_state if so
@@ -127,7 +130,7 @@ the first line we only show the resulting status (not the value of the
     # otherwise record the move, and work out if the guess
     # was good or bad. If good, also work out if the game is
     # now won. If bad, check to see if it is lost
-    # 
+    #
   end
 
   @doc """
@@ -135,10 +138,10 @@ the first line we only show the resulting status (not the value of the
   """
   @spec get_status(game) :: status
   def get_status(game) do
-    # ...
+    Map.get(game, :external_state)
   end
 
-  
+
   @doc """
   Return a fresh game, discarding the previous state of `game`
   """
@@ -152,5 +155,5 @@ the first line we only show the resulting status (not the value of the
   # end of public interface #
   ###########################
 
-  # Your helper functions go here. 
+  # Your helper functions go here.
 end
