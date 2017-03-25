@@ -37,9 +37,13 @@ defmodule CouldDoBetter do
     ]
   """
 
-  def find_anagrams_in(file_name) do
+  def find_anagrams_in(file_name) when is_binary(file_name) do
     file_name
     |> parse_file()
+    |> find_anagrams_in()
+  end
+  def find_anagrams_in(word_list) when is_list(word_list) do
+    word_list
     |> get_anagrams()
     |> with_found_anagrams()
   end
