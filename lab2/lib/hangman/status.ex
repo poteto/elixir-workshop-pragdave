@@ -52,8 +52,7 @@ defmodule Hangman.Status do
     word
     |> String.codepoints()
     |> Enum.reduce(fn c, acc ->
-      require IEx
-      IEx.pry
+      # TODO word revealing algorithm
     end)
   end
 end
