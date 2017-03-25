@@ -40,7 +40,7 @@ defmodule CouldDoBetter do
   def find_anagrams_in(file_name) do
     file_name
     |> parse_file()
-    |> get_signatures()
+    |> get_anagrams()
     |> with_found_anagrams()
   end
 
@@ -50,15 +50,15 @@ defmodule CouldDoBetter do
     |> String.split("\n")
   end
 
-  def get_signatures(words) do
+  def get_anagrams(words) do
     words
-    |> Enum.reduce(%{}, &build_signature/2)
+    |> Enum.reduce(%{}, &build_anagrams_by_signature/2)
     |> Map.values()
   end
 
   def with_found_anagrams(signatures), do: Enum.filter(signatures, fn list -> length(list) > 1 end)
 
-  def build_signature(word, sigs) do
+  def build_anagrams_by_signature(word, sigs) do
     word
     |> sorted_codepoints_for()
     |> update_anagrams(sigs, word)
