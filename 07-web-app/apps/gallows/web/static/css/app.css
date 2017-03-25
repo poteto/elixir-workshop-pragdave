@@ -1,0 +1,93 @@
+body {
+    font-family: 'Gloria Hallelujah', cursive;
+}
+
+.gallows {
+    max-width: 40vw;
+    margin: 0 auto;
+}
+
+.letters {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.letter {
+    display: inline-block;
+    width: 3rem;
+    text-align: center;
+    padding: 0.2rem 0.7rem 0.7rem 0.7rem;
+    background: #eee;
+    border-radius: 10px;
+    margin: 0.7rem;
+    color:  #33a;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.letter:hover {
+    background: #d0d0ee;
+    transition: background-color 0.3s;
+}
+
+.letter.done {
+   pointer-events: none;
+   color: #ddd;
+}
+
+.guessed, .guessed:hover {
+    background: none;
+}
+
+.guessed.good_guess {
+   pointer-events: none;
+   color: #3a3;
+}
+
+.guessed.bad_guess {
+   pointer-events: none;
+   color: #daa;
+}
+
+.word-so-far {
+    margin: 2rem;
+    padding: 0;
+    font-weight: bold;
+    font-size: 4em;
+    color: #383;
+    text-align: center;
+    letter-spacing: 1rem;
+    border-top: 3px solid #6a6;
+    border-bottom: 3px solid #6a6;
+}
+
+
+.overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding-top: 30%;
+    background: none;
+    text-align: center;
+    display: none;
+}
+
+.result .overlay {
+    display: block;
+    background: rgba(255,255,255,0.9);
+}
+
+.won, .lost {
+    width: 100%;
+    font-size: 7vh;
+    font-weight: bold;
+    text-shadow: 2px 2px 3px rgba(150, 150, 150, 1);
+}
+
+.won {
+    color: green;
+}
+
+.lost {
+    color: red;
+}

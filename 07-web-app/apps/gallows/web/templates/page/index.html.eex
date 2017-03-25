@@ -1,0 +1,11 @@
+
+<div class="row">
+  <div class="col-sm-6">
+    <%= render "_svg.html" %>
+  </div>
+
+  <div class="col-sm-6">
+    <%= render "_interaction.html" %>
+  </div>
+</div>
+

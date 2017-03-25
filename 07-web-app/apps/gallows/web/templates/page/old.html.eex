@@ -1,0 +1,21 @@
+
+<div id="drawing">
+</div>
+
+<div class="rest">
+  <div class="word-holder">
+    Word so far:
+    <span class="word">
+    </span>
+  </div>
+
+  <div class="entry">
+    Pick a letter:
+    <input id="letter" autofocus/>
+    <div class="guessed">
+      (guessed so far:
+      <span class="letters">
+      </span>)
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<p class="word-so-far">
+  <span id="word-so-far"></span>
+</p>
+
+<div class="letters">
+  <%= for ch <- ?a .. ?z do %>
+      <a href="#" class="letter" id="letter-<%= << ch >> %>"><%= << ch >> %></a>
+  <% end %>
+</div>
+
+<p class="show-remaining">
+  Guesses left: <span id="guesses-left">999</span>
+</p>

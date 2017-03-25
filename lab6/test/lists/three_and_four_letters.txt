@@ -1,0 +1,4 @@
+deer
+cat
+dog
+colt
