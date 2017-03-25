@@ -1,5 +1,5 @@
 defmodule Hangman.Game do
-  alias Hangman.Status
+  alias Hangman.{Game,Status}
   defstruct external_state: %Status{}, word: nil
 
   @difficulty 10
@@ -131,7 +131,48 @@ the first line we only show the resulting status (not the value of the
     # was good or bad. If good, also work out if the game is
     # now won. If bad, check to see if it is lost
     #
+    with :ok <- validate_guess(game, guess),
+         {:ok, game} <- record_guess(game, guess),
+         {:ok, game} <- check_move(game, guess),
+         {:ok, :good_guess} <- update_letters(game, guess),
+         do: {:ok, game}
+    else
+      {:err, :already_guessed} -> update_guess_state(game, :already_guessed)
+      {:err, :bad_guess} ->
+        game
+        |> update_guess_state(:bad_guess)
+        |> subtract_turn()
   end
+
+  def subtract_turn(%Game{external_state: %Status{} = status} = game) do
+    %Game{game | external_state: Status.update_turns_left(status, -1)}
+  end
+
+  def update_letters(%Game{external_state: %Status{} = status} = game, guess) do
+    %Game{game | external_state: Status.update_letters(status, guess)}
+  end
+
+  def update_guess_state(%Game{external_state: %Status{} = status} = game, guess_state) do
+    %Game{game | external_state: Status.update_state(status, guess_state)}
+  end
+
+  def validate_guess(%Game{external_state: %Status{guessed: guessed} = status} = game, guess) do
+    Status.has_guessed(status, guess)
+  end
+
+  def record_guess(%Game{external_state: %Status{} = status} = game, guess) do
+    require IEx
+    IEx.pry
+    %Game{game | external_state: Status.record_guess(status, guess)}
+  end
+
+  def check_move(%Game{word: word} = game, guess) do
+    cond do
+      String.contains?(word, guess) == false -> {:err, :bad_guess}
+      true -> {:ok, :good_guess}
+    end
+  end
+
 
   @doc """
   Return the status of game. See `make_move` for the format.
