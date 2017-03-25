@@ -1,5 +1,8 @@
 defmodule Hangman.Game do
+  alias Hangman.{Game,Status}
+  defstruct external_state: %Status{}, word: nil
 
+  @difficulty 10
   @moduledoc """
 
   This is the backend for a Hangman game. It manages the game state.
@@ -93,9 +96,9 @@ the first line we only show the resulting status (not the value of the
   """
 
   @spec new_game(String.t) :: game
-  
+
   def new_game(word \\ Hangman.Dictionary.random_word) do
-    # create the state here
+    %Hangman.Game{external_state: Status.new(@difficulty, word), word: word}
   end
 
   @doc """
@@ -119,7 +122,7 @@ the first line we only show the resulting status (not the value of the
   """
 
   @spec make_move(game, ch) :: { game, status }
-  
+
   def make_move(game, guess) do
     # check to see if the letter has already been used, returning
     # the :already_guessed status in guess_state if so
@@ -127,7 +130,54 @@ the first line we only show the resulting status (not the value of the
     # otherwise record the move, and work out if the guess
     # was good or bad. If good, also work out if the game is
     # now won. If bad, check to see if it is lost
-    # 
+    #
+    with :ok <- validate_guess(game, guess),
+         {:ok, game} <- record_guess(game, guess),
+         {:ok, game, guess} <- check_move(game, guess),
+         {:ok, game} <- update_letters(game, guess),
+         {:ok, game} <- update_guess_state(game, :good_guess) do
+           report(game)
+    else
+      {:err, game, :already_guessed} ->
+        {:ok, game} = update_guess_state(game, :already_guessed)
+        report(game)
+      {:err, game, :bad_guess} ->
+        game
+        |> update_guess_state(:bad_guess)
+        |> subtract_turn()
+        |> report()
+    end
+  end
+
+  def subtract_turn({:ok, %Game{external_state: %Status{} = status} = game}) do
+    %Game{game | external_state: Status.update_turns_left(status, -1)}
+  end
+
+  def update_letters(%Game{external_state: %Status{} = status, word: word} = game, guess) do
+    {:ok, %Game{game | external_state: Status.update_letters(status, guess, word)}}
+  end
+
+  def update_guess_state(%Game{external_state: %Status{} = status} = game, guess_state) do
+    {:ok, %Game{game | external_state: Status.update_state(status, guess_state)}}
+  end
+
+  def validate_guess(%Game{external_state: %Status{guessed: guessed} = status} = game, guess) do
+    :ok = Status.has_guessed(status, guess, game)
+  end
+
+  def record_guess(%Game{external_state: %Status{} = status} = game, guess) do
+    {:ok, %Game{game | external_state: Status.record_guess(status, guess)}}
+  end
+
+  def check_move(%Game{word: word} = game, guess) do
+    cond do
+      String.contains?(word, guess) == false -> {:err, game, :bad_guess}
+      true -> {:ok, game, guess}
+    end
+  end
+
+  def report(%Game{} = game) do
+    {game, game.external_state}
   end
 
   @doc """
@@ -135,10 +185,10 @@ the first line we only show the resulting status (not the value of the
   """
   @spec get_status(game) :: status
   def get_status(game) do
-    # ...
+    Map.get(game, :external_state)
   end
 
-  
+
   @doc """
   Return a fresh game, discarding the previous state of `game`
   """
@@ -147,10 +197,9 @@ the first line we only show the resulting status (not the value of the
     # ...
   end
 
-
   ###########################
   # end of public interface #
   ###########################
 
-  # Your helper functions go here. 
+  # Your helper functions go here.
 end
