@@ -51,7 +51,11 @@ defmodule Hangman.Status do
   def reveal_word(word, letters, letter) do
     word
     |> String.codepoints()
-    |> Enum.reduce(fn c, acc ->
+    |> Enum.reduce(letters, fn c, acc ->
+      {:ok, r} = Regex.compile("[^#{c}]")
+      Regex.scan(r, word)
+      |> List.flatten()
+      |> Enum.map(fn _ -> "_" end)
       # TODO word revealing algorithm
     end)
   end
