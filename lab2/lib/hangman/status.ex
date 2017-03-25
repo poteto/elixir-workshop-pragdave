@@ -2,7 +2,7 @@ defmodule Hangman.Status do
   alias Hangman.Status
   defstruct game_state: :in_progress,
             guess_state: nil,
-            turns_left: @difficulty,
+            turns_left: nil,
             letters: [],
             last_guess: nil,
             guessed: MapSet.new()
@@ -27,17 +27,17 @@ defmodule Hangman.Status do
     %Status{status | turns_left: turns_left + 1}
   end
 
-  def update_letters(%Status{letters: letters} = status, letter) do
-    %Status{status | letters: [letter | letters]}
+  def update_letters(%Status{letters: letters} = status, letter, word) do
+    %Status{status | letters: reveal_word(word, letters, letter)}
   end
 
   def record_guess(%Status{guessed: guessed} = status, letter) do
     %Status{status | guessed: MapSet.put(guessed, letter), last_guess: letter}
   end
 
-  def has_guessed(%Status{guessed: guessed} = status, letter) do
+  def has_guessed(%Status{guessed: guessed} = status, letter, game) do
     case MapSet.member?(guessed, letter) do
-      true -> {:err, :already_guessed}
+      true -> {:err, game, :already_guessed}
       false -> :ok
     end
   end
@@ -46,5 +46,14 @@ defmodule Hangman.Status do
     word
     |> String.replace(~r/./, "_")
     |> String.codepoints()
+  end
+
+  def reveal_word(word, letters, letter) do
+    word
+    |> String.codepoints()
+    |> Enum.reduce(fn c, acc ->
+      require IEx
+      IEx.pry
+    end)
   end
 end
